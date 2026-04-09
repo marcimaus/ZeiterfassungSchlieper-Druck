@@ -1,0 +1,9 @@
+{
+	"appId": "de.zeiterfassung.app",
+	"appName": "Zeiterfassung",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https"
+	},
+	"android": {}
+}

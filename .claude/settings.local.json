@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm create:*)",
+      "Bash(brew --version)",
+      "Bash(npm --version)",
+      "Bash(1:*)",
+      "Bash(npx create-vite@latest . --template react-ts)",
+      "Bash(npx create-vite@latest zeiterfassungs-app --template react-ts)",
+      "Bash(mv /Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/zeiterfassungs-app/* /Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/)",
+      "Bash(mv /Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/zeiterfassungs-app/.* /Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/)",
+      "Bash(npm install:*)",
+      "Bash(java --version)",
+      "Bash(npm list:*)",
+      "Bash(ipconfig getifaddr:*)",
+      "Bash(~/.npm-global/bin/firebase --version)",
+      "Bash(npx --yes firebase-tools --version)",
+      "Bash(npm run:*)",
+      "Bash(npx firebase-tools:*)",
+      "Bash(npx tsc:*)",
+      "Bash(~/.npm-global/bin/firebase login:*)",
+      "Bash(~/.npm-global/bin/firebase deploy:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/caraschlieper/.nvm/versions/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(export PATH=\"/usr/local/bin:$PATH\")",
+      "Bash(node -e \"const {execSync}=require\\(''child_process''\\); const s=execSync\\(''identify \"\"/Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/public/Schriftzug alaris.png\"\" 2>/dev/null || sips -g pixelWidth -g pixelHeight \"\"/Users/caraschlieper/ClaudeCode/Zeiterfassungs-App/public/Schriftzug alaris.png\"\"''\\).toString\\(\\); console.log\\(s\\)\")",
+      "Bash(/usr/local/bin/node node_modules/.bin/vite build)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(npx firebase-tools@latest deploy --only hosting)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(/usr/local/bin/npm run:*)",
+      "Bash(ls /usr/local/bin/node*)",
+      "Bash(ls ~/.nvm/versions/node/*/bin/node)",
+      "Bash(npx cap:*)"
+    ]
+  }
+}

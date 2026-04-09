@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AndroidManifest.xml für die Zeiterfassungs-App (Capacitor).
+
+  NFC-spezifische Ergänzungen gegenüber dem Capacitor-Standard:
+    1. <uses-permission android:name="android.permission.NFC" />
+    2. <uses-feature android:name="android.hardware.nfc" />
+    3. Intent-Filter (ACTION_NDEF_DISCOVERED, ACTION_TAG_DISCOVERED,
+                       ACTION_TECH_DISCOVERED) in der MainActivity
+    4. meta-data-Verweis auf nfc_tech_filter.xml für TECH_DISCOVERED
+
+  Nach "npx cap add android" diese Datei mit dem generierten Manifest zusammenführen.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Standard-Permissions (von Capacitor generiert) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- NFC-Permission -->
+    <uses-permission android:name="android.permission.NFC" />
+
+    <!--
+      NFC als Hardware-Feature deklarieren.
+      required="false" erlaubt Installation auch auf Geräten ohne NFC
+      (App funktioniert dann ohne NFC-Scan).
+      Für ein dediziertes Betriebsgerät kann required="true" gesetzt werden.
+    -->
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!--
+          MainActivity mit NFC Intent-Filtern.
+          android:launchMode="singleTask" ist wichtig:
+          Verhindert, dass eine neue Activity-Instanz gestartet wird,
+          wenn die App bereits läuft – stattdessen wird onNewIntent() gerufen.
+        -->
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:launchMode="singleTask"
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBarLaunch">
+
+            <!-- Standard-Launcher-Intent -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+              NDEF_DISCOVERED: App wird gestartet wenn ein NDEF-formatierter Tag
+              in die Nähe gebracht wird. Höchste Priorität im NFC Dispatch System.
+              mime-type "*/*" reagiert auf alle NDEF-Tags.
+            -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+
+            <!--
+              TECH_DISCOVERED: App wird gestartet für alle Chip-Technologien
+              die in nfc_tech_filter.xml aufgelistet sind.
+              Wird als Fallback verwendet wenn kein NDEF-Handler greift.
+            -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+
+            <!--
+              TAG_DISCOVERED: Universeller Fallback für alle NFC-Tags,
+              die von den obigen Filtern nicht erfasst werden.
+            -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- Capacitor-FileProvider (standard, unverändert) -->
+        <provider
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:name="androidx.core.content.FileProvider">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+</manifest>
