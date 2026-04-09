@@ -4,8 +4,8 @@
 //  Konto: info@schlieper-druck.com
 // ═══════════════════════════════════════════════════════════════════
 
-var FIREBASE_PROJECT_ID = 'DEIN_FIREBASE_PROJEKT_ID';  // ← hier neue Firebase-Projekt-ID eintragen
-var FIREBASE_API_KEY    = 'DEIN_FIREBASE_API_KEY';      // ← hier neuen API-Key eintragen
+var FIREBASE_PROJECT_ID = 'zeiterfassung-schlieper-druck';
+var FIREBASE_API_KEY    = 'AIzaSyCPPy4HwoJ1zoNU6fensIk3Vkz2lCA3Hcs';
 
 var WEEKDAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 var MONTH_NAMES = ['Januar','Februar','März','April','Mai','Juni',
