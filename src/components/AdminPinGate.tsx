@@ -87,13 +87,18 @@ export default function AdminPinGate({ children }: Props) {
   }, [state.isAdminMode]);
 
   useEffect(() => {
-    db.getAdminConfig().then((config) => {
-      setChecking(false);
-      if (!config?.pinHash) setSetupMode(true);
-    }).catch(() => {
-      setChecking(false);
-      setSetupMode(true);
-    });
+    const timeout = new Promise<null>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 8000)
+    );
+    Promise.race([db.getAdminConfig(), timeout])
+      .then((config) => {
+        setChecking(false);
+        if (!config?.pinHash) setSetupMode(true);
+      })
+      .catch(() => {
+        setChecking(false);
+        setSetupMode(true);
+      });
   }, []);
 
   useEffect(() => {

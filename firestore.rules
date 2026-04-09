@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Die App verwendet eigene PIN-Authentifizierung statt Firebase Auth.
+    // Alle Lese- und Schreibzugriffe sind erlaubt (Sicherheit über PIN-System).
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -46,10 +46,21 @@ export interface User {
   nfcUid: string;
   createdAt: number;
   isActive: boolean;
-  passwordHash?: string;    // optional – if set, user must enter password to view own data
-  hourlyRate?: number;      // optional – only visible in admin mode
-  useMinimumWage?: boolean; // if true, hourlyRate is ignored; effective rate = AdminConfig.minimumWage
-  birthDate?: string;       // "YYYY-MM-DD" – required when useMinimumWage is false and hourlyRate is set
+  passwordHash?: string;        // optional – if set, user must enter password to view own data
+  hourlyRate?: number;          // optional – only visible in admin mode
+  useMinimumWage?: boolean;     // if true, hourlyRate is ignored; effective rate = AdminConfig.minimumWage
+  birthDate?: string;           // "YYYY-MM-DD" – required when useMinimumWage is false and hourlyRate is set
+  useDefaultCakeRate?: boolean; // if true, use AdminConfig.defaultCakeRate for cake compensation
+  cakeRatePerCake?: number;     // individual cake rate (€ per cake)
+}
+
+export interface CakeEntry {
+  id: string;
+  userId: string;
+  count: number;
+  date: string;       // "YYYY-MM-DD"
+  timestamp: number;
+  ratePerCake: number;
 }
 
 export interface AdminConfig {
@@ -59,6 +70,7 @@ export interface AdminConfig {
   reportEmail?: string;
   reportTime?: string;
   minimumWage?: number;
+  defaultCakeRate?: number;
 }
 
 export type ScanResult =

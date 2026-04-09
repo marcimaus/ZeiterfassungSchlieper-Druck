@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { initializeFirestore, persistentLocalCache } from 'firebase/firestore';
+import { initializeFirestore, memoryLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,7 +12,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Enable offline persistence via IndexedDB (recommended since Firebase v10+)
+// Memory-only cache: works on all browsers/devices without IndexedDB requirement.
+// Suitable for shared devices (NFC scanner, reception tablet).
 export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache(),
+  localCache: memoryLocalCache(),
 });

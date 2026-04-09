@@ -24,6 +24,7 @@ import type {
   BreakPeriod,
   CorrectionEntry,
   AdminInfo,
+  CakeEntry,
 } from './types';
 
 
@@ -575,6 +576,43 @@ export async function setAdminConfig(config: Partial<AdminConfig>): Promise<void
       ...config,
     });
   }
+}
+
+// ── Cake Entries ──────────────────────────────────────────────────────────────
+
+export async function getCakeEntriesForMonth(year: number, month: number): Promise<CakeEntry[]> {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const startDate = `${year}-${pad(month + 1)}-01`;
+  const nextYear = month === 11 ? year + 1 : year;
+  const nextMonth = month === 11 ? 1 : month + 2;
+  const endDate = `${nextYear}-${pad(nextMonth)}-01`;
+  const q = query(
+    collection(db, 'cakeEntries'),
+    where('date', '>=', startDate),
+    where('date', '<', endDate)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => d.data() as CakeEntry);
+}
+
+export async function addCakeEntry(userId: string, count: number, ratePerCake: number): Promise<CakeEntry> {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const entry: CakeEntry = {
+    id: uuid(),
+    userId,
+    count,
+    date,
+    timestamp: Date.now(),
+    ratePerCake,
+  };
+  await setDoc(doc(db, 'cakeEntries', entry.id), entry);
+  return entry;
+}
+
+export async function deleteCakeEntry(entryId: string): Promise<void> {
+  await deleteDoc(doc(db, 'cakeEntries', entryId));
 }
 
 // ── Real-time listeners ───────────────────────────────────────────────────────

@@ -21,6 +21,7 @@ interface AppState {
   adminName: string;
   sessionsUpdatedAt: number;
   minimumWage: number | null;
+  defaultCakeRate: number | null;
 }
 
 type Action =
@@ -30,7 +31,8 @@ type Action =
   | { type: 'LOGOUT_ADMIN' }
   | { type: 'SET_ONLINE'; online: boolean }
   | { type: 'SESSION_UPDATED' }
-  | { type: 'SET_MINIMUM_WAGE'; minimumWage: number | null };
+  | { type: 'SET_MINIMUM_WAGE'; minimumWage: number | null }
+  | { type: 'SET_DEFAULT_CAKE_RATE'; defaultCakeRate: number | null };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -48,6 +50,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, sessionsUpdatedAt: Date.now() };
     case 'SET_MINIMUM_WAGE':
       return { ...state, minimumWage: action.minimumWage };
+    case 'SET_DEFAULT_CAKE_RATE':
+      return { ...state, defaultCakeRate: action.defaultCakeRate };
     default:
       return state;
   }
@@ -61,6 +65,7 @@ const initialState: AppState = {
   adminName: '',
   sessionsUpdatedAt: 0,
   minimumWage: null,
+  defaultCakeRate: null,
 };
 
 // ── Context ───────────────────────────────────────────────────────────────────
@@ -86,6 +91,9 @@ interface AppContextValue {
   logoutAdmin: () => void;
   getAdminInfo: () => AdminInfo;
   notifyMinimumWageChanged: (wage: number | null) => void;
+  addCakeEntry: (userId: string, count: number) => Promise<void>;
+  deleteCakeEntry: (entryId: string) => Promise<void>;
+  notifyDefaultCakeRateChanged: (rate: number | null) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -124,9 +132,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_ACTIVE_SESSIONS', sessions })
     );
 
-    // Load minimum wage from AdminConfig
+    // Load minimum wage and default cake rate from AdminConfig
     db.getAdminConfig().then((config) => {
       dispatch({ type: 'SET_MINIMUM_WAGE', minimumWage: config?.minimumWage ?? null });
+      dispatch({ type: 'SET_DEFAULT_CAKE_RATE', defaultCakeRate: config?.defaultCakeRate ?? null });
     }).catch(console.error);
 
     // One-time migration from localStorage
@@ -281,6 +290,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_MINIMUM_WAGE', minimumWage: wage });
   }, []);
 
+  const notifyDefaultCakeRateChanged = useCallback((rate: number | null) => {
+    dispatch({ type: 'SET_DEFAULT_CAKE_RATE', defaultCakeRate: rate });
+  }, []);
+
+  const addCakeEntry = useCallback(async (userId: string, count: number) => {
+    const user = stateRef.current.users.find((u) => u.id === userId);
+    let ratePerCake = 0;
+    if (user?.useDefaultCakeRate) {
+      ratePerCake = stateRef.current.defaultCakeRate ?? 0;
+    } else if (user?.cakeRatePerCake != null) {
+      ratePerCake = user.cakeRatePerCake;
+    }
+    await db.addCakeEntry(userId, count, ratePerCake);
+  }, []);
+
+  const deleteCakeEntry = useCallback(async (entryId: string) => {
+    await db.deleteCakeEntry(entryId);
+  }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -304,6 +332,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         logoutAdmin,
         getAdminInfo,
         notifyMinimumWageChanged,
+        addCakeEntry,
+        deleteCakeEntry,
+        notifyDefaultCakeRateChanged,
       }}
     >
       {children}
